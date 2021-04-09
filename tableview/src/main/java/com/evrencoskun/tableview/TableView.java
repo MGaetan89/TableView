@@ -34,6 +34,14 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.evrencoskun.tableview.adapter.AbstractTableAdapter;
 import com.evrencoskun.tableview.adapter.recyclerview.CellRecyclerView;
 import com.evrencoskun.tableview.adapter.recyclerview.holder.AbstractViewHolder;
@@ -55,14 +63,6 @@ import com.evrencoskun.tableview.listener.scroll.HorizontalRecyclerViewListener;
 import com.evrencoskun.tableview.listener.scroll.VerticalRecyclerViewListener;
 import com.evrencoskun.tableview.preference.SavedState;
 import com.evrencoskun.tableview.sort.SortState;
-
-import androidx.annotation.AttrRes;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 /**
  * Created by evrencoskun on 11/06/2017.
@@ -151,14 +151,13 @@ public class TableView extends FrameLayout implements ITableView {
 
     /**
      * Two Part class construction<br>
-     * Allows you to set various properties before class initialization if {@code intialize = false}<br>
-     * Allowing more control when programmically creating the class
+     * Allows you to set various properties before class initialization if {@code initialize = false}<br>
+     * Allowing more control when programmatically creating the class.
+     *
+     * <p><b>Note:</b> If initialize is false you need to call {@link #initialize()} method yourself.
      *
      * @param context
      * @param initialize {@code false} to not call second part of class construction
-     *
-     * <p><b>Note:</b> If initialize is false you need to call {@code initilize()} method yourself.
-     *
      */
     public TableView(@NonNull Context context, boolean initialize) {
         super(context);
@@ -443,7 +442,7 @@ public class TableView extends FrameLayout implements ITableView {
     }
 
     @Override
-    public boolean isAllowClickInsideCell(){
+    public boolean isAllowClickInsideCell() {
         return mAllowClickInsideCell;
     }
 
@@ -548,10 +547,7 @@ public class TableView extends FrameLayout implements ITableView {
 
     @Override
     public void remeasureColumnWidth(int column) {
-        // Remove calculated width value to be ready for recalculation.
-        getColumnHeaderLayoutManager().removeCachedWidth(column);
-        // Recalculate of the width values of the columns
-        getCellLayoutManager().fitWidthSize(column, false);
+        mColumnWidthHandler.remeasureColumnWidth(column);
     }
 
     @Nullable
@@ -856,15 +852,17 @@ public class TableView extends FrameLayout implements ITableView {
         mColumnWidthHandler.setColumnWidth(columnPosition, width);
     }
 
-    public void setShowCornerView(boolean showCornerView){
+    public void setShowCornerView(boolean showCornerView) {
         mShowCornerView = showCornerView;
     }
 
-    public boolean getShowCornerView(){
+    public boolean getShowCornerView() {
         return mShowCornerView;
     }
 
-    public CornerViewLocation getCornerViewLocation() { return mCornerViewLocation; }
+    public CornerViewLocation getCornerViewLocation() {
+        return mCornerViewLocation;
+    }
 
     @Override
     public void setCornerViewLocation(CornerViewLocation cornerViewLocation) {
@@ -875,25 +873,27 @@ public class TableView extends FrameLayout implements ITableView {
         int gravity;
         switch (mCornerViewLocation) {
             case TOP_LEFT:
-                gravity = Gravity.TOP|Gravity.LEFT;
+                gravity = Gravity.TOP | Gravity.LEFT;
                 break;
             case TOP_RIGHT:
-                gravity = Gravity.TOP|Gravity.RIGHT;
+                gravity = Gravity.TOP | Gravity.RIGHT;
                 break;
             case BOTTOM_LEFT:
-                gravity = Gravity.BOTTOM|Gravity.LEFT;
+                gravity = Gravity.BOTTOM | Gravity.LEFT;
                 break;
             case BOTTOM_RIGHT:
-                gravity = Gravity.BOTTOM|Gravity.RIGHT;
+                gravity = Gravity.BOTTOM | Gravity.RIGHT;
                 break;
             default:
-                gravity = Gravity.TOP|Gravity.LEFT;
+                gravity = Gravity.TOP | Gravity.LEFT;
                 break;
         }
         return gravity;
     }
 
-    public boolean getReverseLayout(){ return mReverseLayout;}
+    public boolean getReverseLayout() {
+        return mReverseLayout;
+    }
 
     public void setReverseLayout(boolean reverseLayout) {
         mReverseLayout = reverseLayout;

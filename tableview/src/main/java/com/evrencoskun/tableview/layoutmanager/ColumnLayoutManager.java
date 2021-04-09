@@ -140,12 +140,16 @@ public class ColumnLayoutManager extends LinearLayoutManager {
             columnHeaderWidth, @NonNull View columnHeaderChild) {
 
         if (cellWidth == -1) {
-            // Alternatively, TableViewUtils.getWidth(child);
+            // Ignore any previously measured width
+            child.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.EXACTLY);
+
             cellWidth = child.getMeasuredWidth();
         }
 
         if (columnHeaderWidth == -1) {
-            // Alternatively, TableViewUtils.getWidth(columnHeaderChild)
+            // Ignore any previously measured width
+            columnHeaderChild.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.EXACTLY);
+
             columnHeaderWidth = columnHeaderChild.getMeasuredWidth();
         }
 

@@ -24,9 +24,16 @@
 
 package com.evrencoskun.tableview.handler;
 
+import android.view.View;
+
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.evrencoskun.tableview.ITableView;
+import com.evrencoskun.tableview.adapter.recyclerview.CellRecyclerView;
+import com.evrencoskun.tableview.layoutmanager.ColumnHeaderLayoutManager;
+import com.evrencoskun.tableview.layoutmanager.ColumnLayoutManager;
+import com.evrencoskun.tableview.util.TableViewUtils;
 
 /**
  * Created by evrencoskun on 25.04.2018.
@@ -47,6 +54,52 @@ public class ColumnWidthHandler {
 
         // Set each of cell items that is located on the column position
         mTableView.getCellLayoutManager().setCacheWidth(columnPosition, width);
+
+        // Invalidate the column and its header to take the new width into account
+        invalidateColumnHeader(columnPosition, width);
+        invalidateColumn(columnPosition);
     }
 
+    public void remeasureColumnWidth(int columnPosition) {
+
+        // Firstly reset the column header cache map
+        mTableView.getColumnHeaderLayoutManager().removeCachedWidth(columnPosition);
+
+        // Reset each of cell items that is located on the column position
+        mTableView.getCellLayoutManager().removeCacheWidth(columnPosition);
+
+        // Invalidate the column to recalculate its width, and the width of the column header
+        invalidateColumnHeader(columnPosition, -1);
+        invalidateColumn(columnPosition);
+    }
+
+    private void invalidateColumnHeader(int columnPosition, int width) {
+
+        ColumnHeaderLayoutManager columnHeaderLayoutManager = mTableView.getColumnHeaderLayoutManager();
+        View columnHeader = columnHeaderLayoutManager.getChildAt(columnPosition);
+        if (columnHeader != null) {
+            if (width == -1) {
+                columnHeaderLayoutManager.measureChild(columnHeader, 0, 0);
+            } else {
+                TableViewUtils.setWidth(columnHeader, width);
+            }
+        }
+    }
+
+    private void invalidateColumn(int columnPosition) {
+
+        CellRecyclerView cellRecyclerView = mTableView.getCellRecyclerView();
+        for (int row = 0; row < cellRecyclerView.getChildCount(); row++) {
+            RecyclerView recyclerView = (RecyclerView) cellRecyclerView.getChildAt(row);
+            if (recyclerView != null) {
+                ColumnLayoutManager columnLayoutManager = (ColumnLayoutManager) recyclerView.getLayoutManager();
+                if (columnLayoutManager != null) {
+                    View cell = columnLayoutManager.getChildAt(columnPosition);
+                    if (cell != null) {
+                        columnLayoutManager.measureChild(cell, 0, 0);
+                    }
+                }
+            }
+        }
+    }
 }

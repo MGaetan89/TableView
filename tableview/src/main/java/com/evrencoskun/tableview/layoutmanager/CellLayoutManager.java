@@ -24,6 +24,8 @@
 
 package com.evrencoskun.tableview.layoutmanager;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -41,8 +43,6 @@ import com.evrencoskun.tableview.adapter.recyclerview.CellRecyclerView;
 import com.evrencoskun.tableview.adapter.recyclerview.holder.AbstractViewHolder;
 import com.evrencoskun.tableview.listener.scroll.HorizontalRecyclerViewListener;
 import com.evrencoskun.tableview.util.TableViewUtils;
-
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 /**
  * Created by evrencoskun on 24/06/2017.
@@ -508,6 +508,15 @@ public class CellLayoutManager extends LinearLayoutManager {
         for (int i = 0; i < mRowHeaderRecyclerView.getAdapter().getItemCount(); i++) {
             // set cache width for single cell item.
             setCacheWidth(i, column, width);
+        }
+    }
+
+    public void removeCacheWidth(int column) {
+        for (int i = 0; i < mRowHeaderRecyclerView.getAdapter().getItemCount(); i++) {
+            SparseIntArray cellRowCache = mCachedWidthList.get(i);
+            if (cellRowCache != null) {
+                cellRowCache.removeAt(column);
+            }
         }
     }
 
