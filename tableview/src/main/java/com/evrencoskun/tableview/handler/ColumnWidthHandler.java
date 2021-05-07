@@ -33,7 +33,6 @@ import com.evrencoskun.tableview.ITableView;
 import com.evrencoskun.tableview.adapter.recyclerview.CellRecyclerView;
 import com.evrencoskun.tableview.layoutmanager.ColumnHeaderLayoutManager;
 import com.evrencoskun.tableview.layoutmanager.ColumnLayoutManager;
-import com.evrencoskun.tableview.util.TableViewUtils;
 
 /**
  * Created by evrencoskun on 25.04.2018.
@@ -56,8 +55,8 @@ public class ColumnWidthHandler {
         mTableView.getCellLayoutManager().setCacheWidth(columnPosition, width);
 
         // Invalidate the column and its header to take the new width into account
-        invalidateColumnHeader(columnPosition, width);
         invalidateColumn(columnPosition);
+        invalidateColumnHeader(columnPosition);
     }
 
     public void remeasureColumnWidth(int columnPosition) {
@@ -69,20 +68,16 @@ public class ColumnWidthHandler {
         mTableView.getCellLayoutManager().removeCacheWidth(columnPosition);
 
         // Invalidate the column to recalculate its width, and the width of the column header
-        invalidateColumnHeader(columnPosition, -1);
         invalidateColumn(columnPosition);
+        invalidateColumnHeader(columnPosition);
     }
 
-    private void invalidateColumnHeader(int columnPosition, int width) {
+    private void invalidateColumnHeader(int columnPosition) {
 
         ColumnHeaderLayoutManager columnHeaderLayoutManager = mTableView.getColumnHeaderLayoutManager();
         View columnHeader = columnHeaderLayoutManager.getChildAt(columnPosition);
         if (columnHeader != null) {
-            if (width == -1) {
-                columnHeaderLayoutManager.measureChild(columnHeader, 0, 0);
-            } else {
-                TableViewUtils.setWidth(columnHeader, width);
-            }
+            columnHeaderLayoutManager.measureChild(columnHeader, 0, 0);
         }
     }
 
